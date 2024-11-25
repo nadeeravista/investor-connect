@@ -1,15 +1,9 @@
-import { Router, Request, Response } from "express"
-import bcrypt from "bcrypt"
-import pool from "../db"
-import { RowDataPacket } from "mysql2"
+import { Router, Request, Response } from 'express';
+import bcrypt from 'bcrypt';
+import pool from '../db';
+import { RowDataPacket } from 'mysql2';
 
-const router = Router()
-
-interface User {
-  id: number
-  email: string
-  password: string
-}
+const router = Router();
 
 /**
  * @swagger
@@ -35,24 +29,24 @@ interface User {
  *       400:
  *         description: Bad request
  */
-router.post("/signup", async (req: Request, res: Response) => {
-  const { email, password, retry_password } = req.body
+router.post('/signup', async (req: Request, res: Response) => {
+  const { email, password, retry_password } = req.body;
   if (password !== retry_password) {
-    res.status(400).send("Password do not match")
+    res.status(400).send('Password do not match');
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10)
-    const [result] = await pool.query(
-      "INSERT INTO user (email, password) VALUES (?, ?)",
-      [email, hashedPassword]
-    )
-  } catch (error) {
-    res.status(400).send(error)
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await pool.query('INSERT INTO user (email, password) VALUES (?, ?)', [
+      email,
+      hashedPassword,
+    ]);
+  } catch {
+    res.status(400).send('Unable to create user');
   }
 
-  res.status(201).send("User created successfully")
-})
+  res.status(201).send('User created successfully');
+});
 
 /**
  * @swagger
@@ -76,24 +70,24 @@ router.post("/signup", async (req: Request, res: Response) => {
  *       401:
  *         description: Unauthorized
  */
-router.post("/login", async (req: Request, res: Response) => {
-  const { email, password } = req.body
+router.post('/login', async (req: Request, res: Response) => {
+  const { email, password } = req.body;
 
   try {
     const [rows] = await pool.query<RowDataPacket[]>(
-      "SELECT * FROM user WHERE email = ? LIMIT 1",
+      'SELECT * FROM user WHERE email = ? LIMIT 1',
       [email]
-    )
-    console.log(email)
-    const user = rows[0]
-    console.log(rows)
-    if (user && (await bcrypt.compare(password, user["password"]))) {
-      res.status(200).send("Login successful")
-    }
-  } catch (error) {
-    res.status(401).send("Unauthorized")
-  }
-  res.status(401).send("Unauthorized")
-})
+    );
 
-export default router
+    const user = rows[0];
+
+    if (user && (await bcrypt.compare(password, user['password']))) {
+      res.status(200).send('Login successful');
+    }
+  } catch {
+    res.status(401).send('Unauthorized');
+  }
+  res.status(401).send('Unauthorized');
+});
+
+export default router;

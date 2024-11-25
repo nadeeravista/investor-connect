@@ -18,4 +18,6 @@ pbcopy < /Users/milan/.ssh/id_rsa.pub - Add in Git
 npm install --save-dev lint-staged husky eslint prettier
 npx husky init
 npm init @eslint/config
+npx prettier --write . --log-level debug  // to fix issues
+npx prettier --check . --log-level debug // to check issues
 ```
