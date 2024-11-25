@@ -7,14 +7,15 @@
         "dev": "nodemon src/index.ts",
         "build": "tsc",
         "serve": "node dist/index.js",
-        "prepare": "husky"
+        "lint:ts": "eslint . --ext .ts",
+        "format:check": "prettier --check . --ignore-path .prettierignore"
     },
     "lint-staged": {
         "*.ts": [
-            "eslint",
-            "prettier --check"
+            "npm run lint:ts",
+            "npm run format:check"
         ],
-        "*.css": "prettier --check"
+        "*.css": "npm run format:check"
     },
     "keywords": [],
     "author": "",
