@@ -7,7 +7,7 @@
         "dev": "nodemon src/index.ts",
         "build": "tsc",
         "serve": "node dist/index.js",
-        "lint:ts": "eslint . --ext .ts",
+        "lint:ts": "eslint .",
         "format:check": "prettier --check . --ignore-path .prettierignore"
     },
     "lint-staged": {
