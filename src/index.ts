@@ -25,6 +25,11 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+// Expose Swagger JSON spec
+app.get('/swagger.json', (req: Request, res: Response) => {
+  res.json(swaggerDocs);
+});
+
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 
